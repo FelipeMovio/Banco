@@ -1,18 +1,23 @@
-package com.FelipeMovio.banco.dto;
+package com.FelipeMovio.banco.dto.authentication;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
 @ToString
 @Builder
-public class LoginRequestDto {
+public class RegisterRequestDto {
+
+    @NotBlank
+    private String nome;
+
     @NotBlank
     private String email;
 
     @NotBlank
     private String senha;
 }
+
