@@ -16,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "usuario")
 public class UsuarioEntity implements UserDetails {
 
     @Id
@@ -32,6 +33,9 @@ public class UsuarioEntity implements UserDetails {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> role = new HashSet<>();
+
+    @OneToOne(mappedBy = "usuario",cascade = CascadeType.ALL)
+    private Conta conta;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
