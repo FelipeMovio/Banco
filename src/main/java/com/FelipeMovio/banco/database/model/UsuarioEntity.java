@@ -39,7 +39,7 @@ public class UsuarioEntity implements UserDetails {
     private Set<RoleEntity> role = new HashSet<>();
 
     @OneToOne(mappedBy = "usuario",cascade = CascadeType.ALL)
-    private Conta conta;
+    private ContaEntity conta;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -11,7 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Dados {
+@Table(name = "dados")
+public class DadosEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +20,7 @@ public class Dados {
 
     @OneToOne
     @JoinColumn(name = "conta_id")
-    private Conta conta;
+    private ContaEntity conta;
 
     private Long numero;
     private String agencia;

@@ -11,7 +11,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @Entity
-public class Conta {
+@Table(name = "conta")
+public class ContaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,5 +26,5 @@ public class Conta {
     private TipoConta tipo;
 
     @OneToOne(mappedBy = "conta", cascade = CascadeType.ALL)
-    private Dados dados;
+    private DadosEntity dados;
 }
