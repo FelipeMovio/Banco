@@ -5,6 +5,7 @@ import com.FelipeMovio.banco.database.model.DadosEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
+import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,5 +49,14 @@ public class ContaService {
 
     private Long gerarNumeroConta() {
         return 100000L + new Random().nextInt(900000);
+    }
+
+
+
+    public UsuarioMeResponseDto buscarDadosUsuario(
+            UsuarioEntity usuario
+    ) {
+
+        return new UsuarioMeResponseDto(usuario);
     }
 }
