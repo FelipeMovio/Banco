@@ -31,7 +31,11 @@ public class UsuarioEntity implements UserDetails {
     private String senha;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(joinColumns = @JoinColumn(name = "role_id"))
+    @JoinTable(
+            name = "usuario_role",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<RoleEntity> role = new HashSet<>();
 
     @OneToOne(mappedBy = "usuario",cascade = CascadeType.ALL)
