@@ -37,7 +37,7 @@ public class ContaService {
         DadosEntity dados = DadosEntity.builder()
                 .agencia(dto.agencia())
                 .numero(gerarNumeroConta())
-                .saldo(dto.saldo())
+                .saldo(gerarSaldoInicial())
                 .status(true)
                 .conta(conta)
                 .build();
@@ -51,12 +51,10 @@ public class ContaService {
         return 100000L + new Random().nextInt(900000);
     }
 
-
-
-    public UsuarioMeResponseDto buscarDadosUsuario(
-            UsuarioEntity usuario
-    ) {
-
-        return new UsuarioMeResponseDto(usuario);
+    private Double gerarSaldoInicial(){
+        return 100.00 + new Random().nextDouble(1000);
     }
+
+
+
 }
