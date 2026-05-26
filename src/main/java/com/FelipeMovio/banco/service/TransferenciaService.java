@@ -1,13 +1,16 @@
 package com.FelipeMovio.banco.service;
 
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
+import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
 import com.FelipeMovio.banco.database.repository.DadosRepositoy;
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.TransacaoDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,5 +25,10 @@ public class TransferenciaService {
 
     }
 
+    private void validarSaldoPagador(UsuarioEntity usuarioEntity, Double valor){
+        if (usuarioEntity.getConta().getDados().getSaldo().compareTo(valor) < 0){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar a transferência.");
+        }
+    }
 
 }
