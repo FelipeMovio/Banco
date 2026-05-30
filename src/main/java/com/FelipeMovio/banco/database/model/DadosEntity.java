@@ -24,6 +24,7 @@ public class DadosEntity {
     @JoinColumn(name = "conta_id")
     private ContaEntity conta;
 
+    @Column(unique = true)
     private Long numero;
     private String agencia;
     private BigDecimal saldo;

@@ -8,6 +8,7 @@ import com.FelipeMovio.banco.database.repository.DadosRepositoy;
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
 import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
+import com.FelipeMovio.banco.exception.ContaJaExisteException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,6 @@ import java.util.Random;
 public class ContaService {
 
     private final ContaRepository contaRepository;
-    private final UsuarioRepository usuarioRepository;
     private final DadosRepositoy dadosRepositoy;
 
 
@@ -32,7 +32,7 @@ public class ContaService {
     ) {
 
         if (usuario.getConta() != null) {
-            throw new RuntimeException("Usuário já possui conta");
+            throw new ContaJaExisteException("Usuário já possui conta");
         }
 
         ContaEntity conta = ContaEntity.builder()
