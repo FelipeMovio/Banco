@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 public class TransferenciaService {
@@ -26,7 +28,7 @@ public class TransferenciaService {
         return null;
     }
 
-    private void validarSaldoPagador(UsuarioEntity usuarioEntity, Double valor){
+    private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
         if (usuarioEntity.getConta().getDados().getSaldo().compareTo(valor) < 0){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar a transferência.");
         }
