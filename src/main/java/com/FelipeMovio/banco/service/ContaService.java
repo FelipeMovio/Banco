@@ -4,6 +4,7 @@ import com.FelipeMovio.banco.database.model.ContaEntity;
 import com.FelipeMovio.banco.database.model.DadosEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
+import com.FelipeMovio.banco.database.repository.DadosRepositoy;
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
 import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
@@ -21,6 +22,7 @@ public class ContaService {
 
     private final ContaRepository contaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final DadosRepositoy dadosRepositoy;
 
 
     @Transactional
@@ -61,7 +63,14 @@ public class ContaService {
 
 
     private Long gerarNumeroConta() {
-        return 100000L + new Random().nextInt(900000);
+
+        Long numero;
+
+        do {
+            numero = 100000L + new Random().nextInt(900000);
+        } while (dadosRepositoy.existsByNumero(numero));
+
+        return numero;
     }
 
     private BigDecimal gerarSaldoInicial() {

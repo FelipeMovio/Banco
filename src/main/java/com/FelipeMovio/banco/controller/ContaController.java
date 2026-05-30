@@ -4,6 +4,7 @@ import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
 import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
 import com.FelipeMovio.banco.service.ContaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class ContaController {
 
     @PostMapping("/completar-perfil")
     public ResponseEntity<String> completarPerfil(
+            @Valid
             @RequestBody CompletarPerfilDto dto,
             @AuthenticationPrincipal UsuarioEntity usuario
     ) {
