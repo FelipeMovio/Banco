@@ -5,7 +5,6 @@ import com.FelipeMovio.banco.database.model.DadosEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
 import com.FelipeMovio.banco.database.repository.DadosRepositoy;
-import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
 import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
 import com.FelipeMovio.banco.exception.ContaJaExisteException;
@@ -63,7 +62,7 @@ public class ContaService {
     }
 
     //buscar conta
-    public ContaEntity buscarPorUsuario(Long id){
+    public ContaEntity buscarPorConta(Long id){
         return contaRepository.findById(id).orElseThrow( () -> new ContaNaoExisteEception(" não encontrado") );
     }
 

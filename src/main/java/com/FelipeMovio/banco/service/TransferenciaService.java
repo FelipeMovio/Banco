@@ -1,5 +1,6 @@
 package com.FelipeMovio.banco.service;
 
+import com.FelipeMovio.banco.database.model.ContaEntity;
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
@@ -20,12 +21,23 @@ public class TransferenciaService {
 
     private final UsuarioRepository usuarioRepository;
     private final DadosRepositoy dadosRepositoy;
-    private final ContaRepository contaRepository;
+    private final ContaService contaService;
 
     @Transactional
-    public TransacoesEntity transferirValores(TransacaoDto transacaoDtod) {
+    public TransacoesEntity transferirValores(TransacaoDto transacaoDto) {
 
-        return null;
+        ContaEntity pagador = contaService.buscarPorConta(transacaoDto.payer());
+        ContaEntity recebedor = contaService.buscarPorConta(transacaoDto.payee());
+
+        // nao pode se auto mandar dinheiro
+        if (transacaoDto.payer().equals(transacaoDto.payee())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido transferir para si mesmo.");
+        }
+
+
+
+
+            return null;
     }
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
