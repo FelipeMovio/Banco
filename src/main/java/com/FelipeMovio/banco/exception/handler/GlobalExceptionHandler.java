@@ -1,6 +1,7 @@
 package com.FelipeMovio.banco.exception.handler;
 
 import com.FelipeMovio.banco.exception.ContaJaExisteException;
+import com.FelipeMovio.banco.exception.ContaNaoExisteEception;
 import com.FelipeMovio.banco.exception.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,5 +19,15 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ContaNaoExisteEception.class)
+    public ResponseEntity<ErrorResponse> handleException(ContaNaoExisteEception ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }

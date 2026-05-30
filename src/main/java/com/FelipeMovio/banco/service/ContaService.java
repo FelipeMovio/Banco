@@ -9,6 +9,7 @@ import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.CompletarPerfilDto;
 import com.FelipeMovio.banco.dto.UsuarioMeResponseDto;
 import com.FelipeMovio.banco.exception.ContaJaExisteException;
+import com.FelipeMovio.banco.exception.ContaNaoExisteEception;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +62,10 @@ public class ContaService {
         return new UsuarioMeResponseDto(usuario);
     }
 
+    //buscar conta
+    public ContaEntity buscarPorUsuario(Long id){
+        return contaRepository.findById(id).orElseThrow( () -> new ContaNaoExisteEception(" não encontrado") );
+    }
 
     private Long gerarNumeroConta() {
 
