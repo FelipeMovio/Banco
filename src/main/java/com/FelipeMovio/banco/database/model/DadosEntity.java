@@ -4,6 +4,8 @@ package com.FelipeMovio.banco.database.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @ToString
@@ -22,9 +24,10 @@ public class DadosEntity {
     @JoinColumn(name = "conta_id")
     private ContaEntity conta;
 
+    @Column(unique = true)
     private Long numero;
     private String agencia;
-    private Double saldo;
+    private BigDecimal saldo;
     private Boolean status;
 
 }
