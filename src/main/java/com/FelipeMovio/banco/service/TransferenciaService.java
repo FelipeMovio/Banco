@@ -5,6 +5,7 @@ import com.FelipeMovio.banco.database.model.TransacoesEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.ContaRepository;
 import com.FelipeMovio.banco.database.repository.DadosRepositoy;
+import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.TransacaoDto;
 import jakarta.transaction.Transactional;
@@ -19,8 +20,7 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class TransferenciaService {
 
-    private final UsuarioRepository usuarioRepository;
-    private final DadosRepositoy dadosRepositoy;
+    private final TransacaoRepository transacaoRepository;
     private final ContaService contaService;
 
     @Transactional
@@ -34,10 +34,22 @@ public class TransferenciaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido transferir para si mesmo.");
         }
 
+        validarSaldoPagador(pagador.getUsuario(), transacaoDto.value());
+
+        pagador.getDados().setSaldo(pagador.getDados().getSaldo().subtract(transacaoDto.value()));
+        contaService.salvar(pagador.getDados());
+
+        recebedor.getDados().setSaldo(recebedor.getDados().getSaldo().add(transacaoDto.value()));
+        contaService.salvar(recebedor.getDados());
+
+        TransacoesEntity transacoesEntity = TransacoesEntity.builder()
+                .valor(transacaoDto.value())
+                .pagador(pagador.getUsuario())
+                .recebedor(recebedor.getUsuario())
+                .build();
 
 
-
-            return null;
+            return transacaoRepository.saveAndFlush(transacoesEntity);
     }
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){

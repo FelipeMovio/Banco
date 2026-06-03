@@ -19,7 +19,7 @@ public class TransacoesEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double valor;
+    private BigDecimal valor;
 
     @JoinColumn(name = "recebedor_id")
     @ManyToOne

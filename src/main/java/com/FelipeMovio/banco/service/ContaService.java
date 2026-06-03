@@ -66,6 +66,25 @@ public class ContaService {
         return contaRepository.findById(id).orElseThrow( () -> new ContaNaoExisteEception(" não encontrado") );
     }
 
+
+    //salvar
+    public void salvar(DadosEntity dados){
+        dadosRepositoy.save(dados);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     private Long gerarNumeroConta() {
 
         Long numero;
