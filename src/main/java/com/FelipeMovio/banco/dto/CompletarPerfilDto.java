@@ -11,9 +11,6 @@ public record CompletarPerfilDto(
         TipoConta tipoConta,
 
         @NotNull
-        String agencia,
-
-        @NotNull
         BigDecimal saldo
 ) {
 }
