@@ -8,6 +8,7 @@ import com.FelipeMovio.banco.database.repository.DadosRepositoy;
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.TransacaoDto;
+import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,7 @@ public class TransferenciaService {
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
         if (usuarioEntity.getConta().getDados().getSaldo().compareTo(valor) < 0){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar a transferência.");
+            throw new SaldoInsuficienteException("Saldo insuficiente para realizar a transferência.");
         }
     }
 
