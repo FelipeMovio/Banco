@@ -20,13 +20,13 @@ public class AuthController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(@RequestBody @Valid RegisterRequestDto dto) throws BadRequestException {
+    public void register(@RequestBody @Valid RegisterRequestDto dto) {
         authenticationService.register(dto);
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponseDto> login(@RequestBody @Valid LoginRequestDto dto) throws BadRequestException {
+    public ResponseEntity<TokenResponseDto> login(@RequestBody @Valid LoginRequestDto dto)  {
         return ResponseEntity.ok(authenticationService.login(dto));
     }
 }

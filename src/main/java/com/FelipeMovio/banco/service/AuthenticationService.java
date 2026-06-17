@@ -10,6 +10,7 @@ import com.FelipeMovio.banco.dto.authentication.LoginRequestDto;
 import com.FelipeMovio.banco.dto.authentication.RegisterRequestDto;
 import com.FelipeMovio.banco.dto.authentication.TokenResponseDto;
 import com.FelipeMovio.banco.enums.RoleTypeEnum;
+import com.FelipeMovio.banco.exception.ContaJaExisteException;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,12 +33,12 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final TokenProvider tokenProvider;
 
-    public void register(RegisterRequestDto dto) throws BadRequestException {
+    public void register(RegisterRequestDto dto){
         UsuarioEntity usuario = usuarioRepository.findByEmail(dto.getEmail())
                 .orElse(null);
 
         if (usuario != null) {
-            throw new BadRequestException("Aluno já cadastrado com este email");
+            throw new ContaJaExisteException("Aluno já cadastrado com este email");
         }
 
         RoleEntity role = roleRepository.findByNome(RoleTypeEnum.ROLE_USER.name())
