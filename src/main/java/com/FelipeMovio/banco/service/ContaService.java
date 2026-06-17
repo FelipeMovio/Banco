@@ -41,7 +41,7 @@ public class ContaService {
                 .build();
 
         DadosEntity dados = DadosEntity.builder()
-                .agencia(dto.agencia())
+                .agencia(geradorDeAgencia())
                 .numero(gerarNumeroConta())
                 .saldo(gerarSaldoInicial())
                 .status(true)
@@ -74,17 +74,6 @@ public class ContaService {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     private Long gerarNumeroConta() {
 
         Long numero;
@@ -102,6 +91,23 @@ public class ContaService {
                 100 + new Random().nextDouble(1000)
         ).setScale(2, RoundingMode.HALF_UP);
     }
+
+    private String geradorDeAgencia(){
+        String caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder stringAleatoria = new StringBuilder();
+        Random random = new Random();
+
+        int tamanho = 6;
+
+        for (int i = 0; i < tamanho; i++) {
+            // Sorteia um índice baseado no tamanho da string de caracteres
+            int index = random.nextInt(caracteres.length());
+            stringAleatoria.append(caracteres.charAt(index));
+        }
+
+        return stringAleatoria.toString();
+    }
+
 
 
 }

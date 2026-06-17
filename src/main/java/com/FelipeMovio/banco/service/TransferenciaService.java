@@ -3,11 +3,12 @@ package com.FelipeMovio.banco.service;
 import com.FelipeMovio.banco.database.model.ContaEntity;
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
-import com.FelipeMovio.banco.database.repository.ContaRepository;
-import com.FelipeMovio.banco.database.repository.DadosRepositoy;
+
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
-import com.FelipeMovio.banco.database.repository.UsuarioRepository;
+
 import com.FelipeMovio.banco.dto.TransacaoDto;
+import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,15 @@ public class TransferenciaService {
 
         // nao pode se auto mandar dinheiro
         if (transacaoDto.payer().equals(transacaoDto.payee())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não é permitido transferir para si mesmo.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Não é permitido transferir para si mesmo.");
+        }
+
+        if (transacaoDto.value().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "O valor deve ser maior que zero."
+            );
         }
 
         validarSaldoPagador(pagador.getUsuario(), transacaoDto.value());
@@ -49,12 +58,12 @@ public class TransferenciaService {
                 .build();
 
 
-            return transacaoRepository.saveAndFlush(transacoesEntity);
+            return transacaoRepository.save(transacoesEntity);
     }
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
         if (usuarioEntity.getConta().getDados().getSaldo().compareTo(valor) < 0){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Saldo insuficiente para realizar a transferência.");
+            throw new SaldoInsuficienteException("Saldo insuficiente para realizar a transferência.");
         }
     }
 
