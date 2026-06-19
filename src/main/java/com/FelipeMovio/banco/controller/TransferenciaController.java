@@ -2,6 +2,7 @@ package com.FelipeMovio.banco.controller;
 
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
+import com.FelipeMovio.banco.dto.MinhasTransacoesResponseDto;
 import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoResponseDto;
 import com.FelipeMovio.banco.service.TransferenciaService;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/transferencia")
@@ -26,5 +29,12 @@ public class TransferenciaController {
 
         return transferenciaService.transferirValores(dto, usuario);
 
+    }
+
+    @GetMapping("/me")
+    public MinhasTransacoesResponseDto minhasTransacoes(
+            @AuthenticationPrincipal UsuarioEntity usuario){
+
+        return transferenciaService.minhasTransacoes(usuario);
     }
 }

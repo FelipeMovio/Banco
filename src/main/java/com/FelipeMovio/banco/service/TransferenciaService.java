@@ -7,6 +7,7 @@ import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 
 import com.FelipeMovio.banco.database.repository.UsuarioRepository;
+import com.FelipeMovio.banco.dto.MinhasTransacoesResponseDto;
 import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoResponseDto;
 import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -66,6 +69,26 @@ public class TransferenciaService {
 
 
             return TransacaoResponseDto.fromEntity(transacaoSalva);
+    }
+
+    public MinhasTransacoesResponseDto minhasTransacoes(UsuarioEntity usuario){
+
+        List<TransacaoResponseDto> comoPagador =
+                transacaoRepository.findByPagador(usuario)
+                        .stream()
+                        .map(TransacaoResponseDto::fromEntity)
+                        .toList();
+
+        List<TransacaoResponseDto> comoRecebedor =
+                transacaoRepository.findByRecebedor(usuario)
+                        .stream()
+                        .map(TransacaoResponseDto::fromEntity)
+                        .toList();
+
+        return new MinhasTransacoesResponseDto(
+                comoPagador,
+                comoRecebedor
+        );
     }
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
