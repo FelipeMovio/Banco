@@ -6,7 +6,7 @@ import com.FelipeMovio.banco.database.model.UsuarioEntity;
 
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 
-import com.FelipeMovio.banco.dto.TransacaoDto;
+import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
 
 import jakarta.transaction.Transactional;
@@ -25,7 +25,7 @@ public class TransferenciaService {
     private final ContaService contaService;
 
     @Transactional
-    public TransacoesEntity transferirValores(TransacaoDto transacaoDto) {
+    public TransacoesEntity transferirValores(TransacaoRequestDto transacaoDto) {
 
         ContaEntity pagador = contaService.buscarPorConta(transacaoDto.payer());
         ContaEntity recebedor = contaService.buscarPorConta(transacaoDto.payee());

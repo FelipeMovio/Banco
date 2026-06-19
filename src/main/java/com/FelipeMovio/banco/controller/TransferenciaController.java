@@ -1,7 +1,7 @@
 package com.FelipeMovio.banco.controller;
 
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
-import com.FelipeMovio.banco.dto.TransacaoDto;
+import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.service.TransferenciaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class TransferenciaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransacoesEntity fazerTransacao(@RequestBody TransacaoDto dto){
+    public TransacoesEntity fazerTransacao(@RequestBody TransacaoRequestDto dto){
 
         return transferenciaService.transferirValores(dto);
 
