@@ -6,7 +6,9 @@ import com.FelipeMovio.banco.database.model.UsuarioEntity;
 
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 
+import com.FelipeMovio.banco.database.repository.UsuarioRepository;
 import com.FelipeMovio.banco.dto.TransacaoRequestDto;
+import com.FelipeMovio.banco.dto.TransacaoResponseDto;
 import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
 
 import jakarta.transaction.Transactional;
@@ -24,16 +26,19 @@ public class TransferenciaService {
     private final TransacaoRepository transacaoRepository;
     private final ContaService contaService;
 
-    @Transactional
-    public TransacoesEntity transferirValores(TransacaoRequestDto transacaoDto) {
 
-        ContaEntity pagador = contaService.buscarPorConta(transacaoDto.payer());
+    @Transactional
+    public TransacaoResponseDto transferirValores(TransacaoRequestDto transacaoDto,UsuarioEntity usuarioLogado) {
+
+        ContaEntity pagador = usuarioLogado.getConta();
         ContaEntity recebedor = contaService.buscarPorConta(transacaoDto.payee());
 
         // nao pode se auto mandar dinheiro
-        if (transacaoDto.payer().equals(transacaoDto.payee())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Não é permitido transferir para si mesmo.");
+        if (pagador.getId().equals(recebedor.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Não é permitido transferir para si mesmo."
+            );
         }
 
         if (transacaoDto.value().compareTo(BigDecimal.ZERO) <= 0) {
@@ -57,8 +62,10 @@ public class TransferenciaService {
                 .recebedor(recebedor.getUsuario())
                 .build();
 
+        TransacoesEntity transacaoSalva = transacaoRepository.save(transacoesEntity);
 
-            return transacaoRepository.save(transacoesEntity);
+
+            return TransacaoResponseDto.fromEntity(transacaoSalva);
     }
 
     private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
