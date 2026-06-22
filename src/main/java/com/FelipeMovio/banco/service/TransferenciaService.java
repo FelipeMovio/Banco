@@ -28,6 +28,7 @@ public class TransferenciaService {
 
     private final TransacaoRepository transacaoRepository;
     private final ContaService contaService;
+    private final EmailService emailService;
 
 
     @Transactional
@@ -65,7 +66,20 @@ public class TransferenciaService {
                 .recebedor(recebedor.getUsuario())
                 .build();
 
+
         TransacoesEntity transacaoSalva = transacaoRepository.save(transacoesEntity);
+
+        emailService.enviarEmail(
+                pagador.getUsuario().getEmail(),
+                "Transferência enviada",
+                "Você enviou R$ " + transacaoDto.value()
+        );
+
+        emailService.enviarEmail(
+                recebedor.getUsuario().getEmail(),
+                "Transferência recebida",
+                "Você recebeu R$ " + transacaoDto.value()
+        );
 
 
             return TransacaoResponseDto.fromEntity(transacaoSalva);
