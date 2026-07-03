@@ -30,4 +30,5 @@ public class PixKeyEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conta_id")
     private ContaEntity conta;
+
 }
