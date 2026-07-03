@@ -38,4 +38,49 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
+
+    @ExceptionHandler(PixKeyNaoPertenceAoUsuarioException.class)
+    public ResponseEntity<ErrorResponse> handlePixKeyJaExisteException(PixKeyNaoPertenceAoUsuarioException ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.CONFLICT.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(PixKeyNaoEncontradaException.class)
+    public ResponseEntity<ErrorResponse> handlePixKeyNaoEncontradaException(PixKeyNaoEncontradaException ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.NOT_FOUND.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+
+    }
+
+    @ExceptionHandler(PixKeyJaExisteException.class)
+    public ResponseEntity<ErrorResponse> handlePixKeyJaExisteException(PixKeyJaExisteException ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.CONFLICT.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(UltimaChavePixException.class)
+    public ResponseEntity<ErrorResponse> handleUltimaChave(
+            UltimaChavePixException ex
+    ) {
+
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.CONFLICT.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(response);
+    }
 }
