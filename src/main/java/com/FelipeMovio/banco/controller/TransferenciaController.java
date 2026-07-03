@@ -1,15 +1,17 @@
 package com.FelipeMovio.banco.controller;
 
-import com.FelipeMovio.banco.database.model.TransacoesEntity;
+
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 import com.FelipeMovio.banco.dto.MinhasTransacoesResponseDto;
+import com.FelipeMovio.banco.dto.TransacaoPixRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoResponseDto;
 import com.FelipeMovio.banco.service.TransferenciaService;
-import com.FelipeMovio.banco.service.UserDetailsServiceImplements;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +26,19 @@ public class TransferenciaController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransacaoResponseDto fazerTransacao(@RequestBody TransacaoRequestDto dto,
+    public TransacaoResponseDto fazerTransacao(@Valid @RequestBody TransacaoRequestDto dto,
                                                @AuthenticationPrincipal UsuarioEntity usuario){
 
         return transferenciaService.transferirValores(dto, usuario);
+
+    }
+
+    @PostMapping("/pix")
+    @ResponseStatus(HttpStatus.CREATED)
+    public TransacaoResponseDto fazerTransacaoPix(@Valid @RequestBody TransacaoPixRequestDto dto,
+                                               @AuthenticationPrincipal UsuarioEntity usuario){
+
+        return transferenciaService.transferenciaPix(dto, usuario);
 
     }
 
