@@ -1,26 +1,30 @@
 package com.FelipeMovio.banco.service;
 
 import com.FelipeMovio.banco.database.model.ContaEntity;
+
 import com.FelipeMovio.banco.database.model.TransacoesEntity;
 import com.FelipeMovio.banco.database.model.UsuarioEntity;
 
 import com.FelipeMovio.banco.database.repository.TransacaoRepository;
 
-import com.FelipeMovio.banco.database.repository.UsuarioRepository;
+
 import com.FelipeMovio.banco.dto.MinhasTransacoesResponseDto;
+import com.FelipeMovio.banco.dto.TransacaoPixRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoRequestDto;
 import com.FelipeMovio.banco.dto.TransacaoResponseDto;
+import com.FelipeMovio.banco.exception.AutoTransferenciaException;
 import com.FelipeMovio.banco.exception.SaldoInsuficienteException;
 
+import com.FelipeMovio.banco.exception.ValorTransferenciaInvalidoException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,60 +33,42 @@ public class TransferenciaService {
     private final TransacaoRepository transacaoRepository;
     private final ContaService contaService;
     private final EmailService emailService;
+    private final PixService pixService;
 
 
     @Transactional
-    public TransacaoResponseDto transferirValores(TransacaoRequestDto transacaoDto,UsuarioEntity usuarioLogado) {
+    public TransacaoResponseDto transferirValores(
+            TransacaoRequestDto dto,
+            UsuarioEntity usuario
+    ) {
 
-        ContaEntity pagador = usuarioLogado.getConta();
-        ContaEntity recebedor = contaService.buscarPorConta(transacaoDto.payee());
+        ContaEntity pagador = usuario.getConta();
+        ContaEntity recebedor = contaService.buscarPorConta(dto.payee());
 
-        // nao pode se auto mandar dinheiro
-        if (pagador.getId().equals(recebedor.getId())) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Não é permitido transferir para si mesmo."
-            );
-        }
-
-        if (transacaoDto.value().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "O valor deve ser maior que zero."
-            );
-        }
-
-        validarSaldoPagador(pagador.getUsuario(), transacaoDto.value());
-
-        pagador.getDados().setSaldo(pagador.getDados().getSaldo().subtract(transacaoDto.value()));
-        contaService.salvar(pagador.getDados());
-
-        recebedor.getDados().setSaldo(recebedor.getDados().getSaldo().add(transacaoDto.value()));
-        contaService.salvar(recebedor.getDados());
-
-        TransacoesEntity transacoesEntity = TransacoesEntity.builder()
-                .valor(transacaoDto.value())
-                .pagador(pagador.getUsuario())
-                .recebedor(recebedor.getUsuario())
-                .build();
-
-
-        TransacoesEntity transacaoSalva = transacaoRepository.save(transacoesEntity);
-
-        emailService.enviarEmail(
-                pagador.getUsuario().getEmail(),
-                "Transferência enviada",
-                "Você enviou R$ " + transacaoDto.value()
+        return realizarTransferencia(
+                pagador,
+                recebedor,
+                dto.value()
         );
+    }
 
-        emailService.enviarEmail(
-                recebedor.getUsuario().getEmail(),
-                "Transferência recebida",
-                "Você recebeu R$ " + transacaoDto.value()
+    @Transactional
+    public TransacaoResponseDto transferenciaPix(
+            TransacaoPixRequestDto dto,
+            UsuarioEntity usuario
+    ) {
+
+        ContaEntity pagador = usuario.getConta();
+
+        ContaEntity recebedor = pixService
+                .buscarPorChave(dto.chave())
+                .getConta();
+
+        return realizarTransferencia(
+                pagador,
+                recebedor,
+                dto.value()
         );
-
-
-            return TransacaoResponseDto.fromEntity(transacaoSalva);
     }
 
     public MinhasTransacoesResponseDto minhasTransacoes(UsuarioEntity usuario){
@@ -105,10 +91,82 @@ public class TransferenciaService {
         );
     }
 
-    private void validarSaldoPagador(UsuarioEntity usuarioEntity, BigDecimal valor){
-        if (usuarioEntity.getConta().getDados().getSaldo().compareTo(valor) < 0){
-            throw new SaldoInsuficienteException("Saldo insuficiente para realizar a transferência.");
+    //privadas
+    private TransacaoResponseDto realizarTransferencia(
+            ContaEntity pagador,
+            ContaEntity recebedor,
+            BigDecimal valor
+    ) {
+        if (pagador.getId().equals(recebedor.getId())) {
+            throw new AutoTransferenciaException(
+                    "Não é permitido transferir para si mesmo."
+            );
+        }
+
+        if (valor.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new ValorTransferenciaInvalidoException(
+                    "O valor deve ser maior que zero."
+            );
+        }
+
+        validarSaldo(pagador, valor);
+
+        pagador.getDados().setSaldo(
+                pagador.getDados().getSaldo().subtract(valor)
+        );
+
+        recebedor.getDados().setSaldo(
+                recebedor.getDados().getSaldo().add(valor)
+        );
+
+        contaService.salvar(pagador.getDados());
+        contaService.salvar(recebedor.getDados());
+
+        TransacoesEntity transacao = TransacoesEntity.builder()
+                .valor(valor)
+                .pagador(pagador.getUsuario())
+                .recebedor(recebedor.getUsuario())
+                .build();
+
+        TransacoesEntity salva = transacaoRepository.save(transacao);
+
+        enviarEmails(
+                pagador,
+                recebedor,
+                valor
+        );
+
+        return TransacaoResponseDto.fromEntity(salva);
+    }
+
+
+    private void validarSaldo(
+            ContaEntity conta,
+            BigDecimal valor
+    ){
+
+        if (conta.getDados().getSaldo().compareTo(valor) < 0){
+            throw new SaldoInsuficienteException(
+                    "Saldo insuficiente para realizar a transferência."
+            );
         }
     }
 
+    private void enviarEmails(
+            ContaEntity pagador,
+            ContaEntity recebedor,
+            BigDecimal valor
+    ){
+        emailService.enviarEmail(
+                pagador.getUsuario().getEmail(),
+                "Transferência enviada",
+                "Você enviou R$ " + valor
+        );
+
+        emailService.enviarEmail(
+                recebedor.getUsuario().getEmail(),
+                "Transferência recebida",
+                "Você recebeu R$ " + valor
+        );
+    }
 }

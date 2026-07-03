@@ -83,4 +83,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(response);
     }
+
+    @ExceptionHandler(AutoTransferenciaException.class)
+    public ResponseEntity<ErrorResponse> handleAutoTransferenciaException(AutoTransferenciaException ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
+    @ExceptionHandler(ValorTransferenciaInvalidoException.class)
+    public ResponseEntity<ErrorResponse> handleValorTransferenciaInvalidoException(ValorTransferenciaInvalidoException ex){
+        ErrorResponse response = ErrorResponse.builder()
+                .message(ex.getMessage())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
 }
