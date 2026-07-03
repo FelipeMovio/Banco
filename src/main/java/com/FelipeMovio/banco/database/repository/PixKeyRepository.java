@@ -13,4 +13,5 @@ public interface PixKeyRepository extends JpaRepository<PixKeyEntity, Long> {
     boolean existsByChave(String chave);
 
     List<PixKeyEntity> findAllByContaId(Long contaId);
+
 }

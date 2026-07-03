@@ -31,4 +31,5 @@ public class PixKeyEntity {
     @JoinColumn(name = "conta_id")
     private ContaEntity conta;
 
+
 }

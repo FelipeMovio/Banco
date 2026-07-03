@@ -39,13 +39,4 @@ public class ContaEntity {
     )
     private List<PixKeyEntity> pixKeys = new ArrayList<>();
 
-    public void adicionarPixKey(PixKeyEntity pixKey) {
-        pixKeys.add(pixKey);
-        pixKey.setConta(this);
-    }
-
-    public void removerPixKey(PixKeyEntity pixKey) {
-        pixKeys.remove(pixKey);
-        pixKey.setConta(null);
-    }
 }
