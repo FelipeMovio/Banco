@@ -4,6 +4,9 @@ import com.FelipeMovio.banco.enums.TipoConta;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @ToString
@@ -27,4 +30,13 @@ public class ContaEntity {
 
     @OneToOne(mappedBy = "conta", cascade = CascadeType.ALL)
     private DadosEntity dados;
+
+    @Builder.Default
+    @OneToMany(
+            mappedBy = "conta",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<PixKeyEntity> pixKeys = new ArrayList<>();
+
 }

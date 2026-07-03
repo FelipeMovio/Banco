@@ -66,6 +66,8 @@ public class ContaService {
         return contaRepository.findById(id).orElseThrow( () -> new ContaNaoExisteEception(" não encontrado") );
     }
 
+    //buscar por email
+
 
     //salvar
     public void salvar(DadosEntity dados){
