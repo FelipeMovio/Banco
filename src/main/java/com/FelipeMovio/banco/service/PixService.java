@@ -52,7 +52,7 @@ public class PixService {
     }
 
     @Transactional
-    public void desativar(Long id, UsuarioEntity usuario) {
+    public void desativarChave(Long id, UsuarioEntity usuario) {
 
         ContaEntity conta = buscarConta(usuario);
 
