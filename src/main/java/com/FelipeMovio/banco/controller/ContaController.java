@@ -64,6 +64,15 @@ public class ContaController {
         return ResponseEntity.ok(keys);
     }
 
+    @PatchMapping("/pix/destivar-chave/{id}")
+    public ResponseEntity<String> desativarChave(@PathVariable Long id,
+                                                 @AuthenticationPrincipal UsuarioEntity usuario){
+
+        pixService.desativarChave(id, usuario);
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Chave pix desativada");
+
+    }
 
 
 }
