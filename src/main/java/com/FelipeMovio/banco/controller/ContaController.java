@@ -53,6 +53,16 @@ public class ContaController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Chave pix cadastrada");
     }
+    @GetMapping("/pix/chaves")
+    public ResponseEntity<List<PixKeyResponseDto>> verChavesPix( @AuthenticationPrincipal UsuarioEntity usuario){
+        List<PixKeyResponseDto> keys = pixService.listarChaves(usuario);
+
+        if (keys.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok(keys);
+    }
 
 
 
